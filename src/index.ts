@@ -1,7 +1,7 @@
 import express, { Application } from 'express';
 import morgan from 'morgan';
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT ?? 8000;
 
 const app: Application = express();
 
