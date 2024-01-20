@@ -4,8 +4,20 @@ services:
       context: .
     command: npm run start-dev
     environment:
+      DB_SERVER: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_NAME: parking
+      DB_PASSWORD_FILE: /run/secrets/db-password
+      TEST_DB_SERVER: db-test
+      TEST_DB_PORT: 5433
+      TEST_DB_USER: postgres
+      TEST_DB_PASSWORD: test
+      TEST_DB_NAME: test
       NODE_ENV: development
       PORT: 8000
+    secrets:
+      - db-password
     ports:
       - 8000:8000
     volumes:
@@ -22,7 +34,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=example
+      - POSTGRES_DB=parking
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
     ports:
       - 5432:5432
@@ -31,6 +43,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  db-test:
+    image: postgres
+    user: postgres
+    environment:
+      - POSTGRES_DB=test
+      - POSTGRES_PASSWORD=test
+    ports:
+      - 5433:5433
+    command: -p 5433
 volumes:
   db-data:
 secrets:
