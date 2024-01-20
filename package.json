@@ -12,7 +12,7 @@
     "lint-fix": "eslint --fix '**/*.ts'",
     "prettier": "prettier --check --ignore-unknown '**/*.ts'",
     "prettier-fix": "prettier --write --ignore-unknown '**/*.ts'",
-    "typecheck": "tsc --noEmit --project ./tsconfig.json",
+    "typecheck": "npx tsc-files --noEmit --pretty",
     "swagger": "tsoa spec",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "npx husky install"
@@ -58,7 +58,7 @@
     "**/*.ts": [
       "npm run prettier-fix",
       "npm run lint-fix",
-      "npx tsc-files --noEmit --pretty"
+      "npm run typecheck"
     ]
   }
 }
