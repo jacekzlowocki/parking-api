@@ -7,6 +7,14 @@ Start the application with live compilation and reload by running:
 
 Application will be available at http://localhost:8000.
 
+### Running tests
+
+The application uses e2e tests to ensure the correct behavior.
+
+To run the tests on local machine:
+- Run `docker-compose run -p 5433:5433 db-test` so the test DB is available for tests
+- Run `npm run test`
+
 ### Deploying your application to the cloud
 
 First, build your image, e.g.: `docker build -t parking-api .`.
