@@ -7,6 +7,13 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"UserRole": {
+				"enum": [
+					"admin",
+					"standard"
+				],
+				"type": "string"
+			},
 			"User": {
 				"properties": {
 					"id": {
@@ -21,19 +28,33 @@
 					},
 					"email": {
 						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/UserRole"
+					},
+					"token": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"id",
 					"firstName",
 					"lastName",
-					"email"
+					"email",
+					"role",
+					"token"
 				],
 				"type": "object",
 				"additionalProperties": false
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"token": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header"
+			}
+		}
 	},
 	"info": {
 		"title": "parking-api",
@@ -46,25 +67,6 @@
 		}
 	},
 	"paths": {
-		"/health": {
-			"get": {
-				"operationId": "Get",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": []
-			}
-		},
 		"/users": {
 			"get": {
 				"operationId": "List",
@@ -78,6 +80,31 @@
 										"$ref": "#/components/schemas/User"
 									},
 									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"token": [
+							"admin"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/health": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
 								}
 							}
 						}

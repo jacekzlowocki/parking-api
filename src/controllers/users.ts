@@ -1,11 +1,13 @@
-import { Get, Route } from 'tsoa';
-import { User } from '../entities/User';
+import { Get, Header, Route, Security } from 'tsoa';
+import { User, UserRole } from '../entities/User';
 import { getUsers } from '../repositories/users';
 
 @Route('users')
-export default class UsersController {
+export class UsersController {
+  @Header('Authorization')
+  @Security('token', [UserRole.Admin])
   @Get('/')
-  public list(): Promise<User[]> {
+  public async list(): Promise<User[]> {
     return getUsers();
   }
 }

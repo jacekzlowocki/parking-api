@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebuild": "npm run swagger",
-    "build": "tsc",
+    "build": "tsoa spec-and-routes && tsc",
     "prestart-dev": "npm run swagger",
-    "start-dev": "concurrently 'nodemon' 'nodemon -x tsoa spec'",
+    "start-dev": "concurrently 'nodemon' 'nodemon -x tsoa spec-and-routes'",
+    "start": "node build/index.js",
     "lint": "eslint '**/*.ts'",
     "lint-fix": "eslint --fix '**/*.ts'",
     "prettier": "prettier --check --ignore-unknown '**/*.ts'",
@@ -60,7 +60,8 @@
       "src"
     ],
     "ext": "ts",
-    "exec": "ts-node src/index.ts"
+    "exec": "ts-node src/index.ts",
+    "ignore": ["src/routes"]
   },
   "lint-staged": {
     "**/*.ts": [
