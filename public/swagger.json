@@ -34,6 +34,24 @@
 					},
 					"token": {
 						"type": "string"
+					},
+					"bookings": {
+						"items": {
+							"$ref": "#/components/schemas/Booking"
+						},
+						"type": "array"
+					},
+					"createdDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedDate": {
+						"type": "string",
+						"format": "date-time"
 					}
 				},
 				"required": [
@@ -42,10 +60,137 @@
 					"lastName",
 					"email",
 					"role",
-					"token"
+					"token",
+					"bookings",
+					"createdDate",
+					"updatedDate",
+					"deletedDate"
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"Booking": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"parkingSpot": {
+						"$ref": "#/components/schemas/ParkingSpot"
+					},
+					"parkingSpotId": {
+						"type": "number",
+						"format": "double"
+					},
+					"startDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"endDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"createdDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedDate": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"user",
+					"userId",
+					"parkingSpot",
+					"parkingSpotId",
+					"startDate",
+					"endDate",
+					"createdDate",
+					"updatedDate",
+					"deletedDate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ParkingSpot": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"bookings": {
+						"items": {
+							"$ref": "#/components/schemas/Booking"
+						},
+						"type": "array"
+					},
+					"createdDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedDate": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"bookings",
+					"createdDate",
+					"updatedDate",
+					"deletedDate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BookingPayload": {
+				"properties": {
+					"endDate": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"parkingSpotId": {
+						"type": "number",
+						"format": "double"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"endDate",
+					"startDate",
+					"parkingSpotId"
+				],
+				"type": "object"
 			}
 		},
 		"securitySchemes": {
@@ -112,6 +257,112 @@
 				},
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/bookings": {
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Booking"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"token": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Booking"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Failed"
+					}
+				},
+				"security": [
+					{
+						"token": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BookingPayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/bookings/{id}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Booking"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Failed"
+					}
+				},
+				"security": [
+					{
+						"token": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BookingPayload"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

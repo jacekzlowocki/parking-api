@@ -9,33 +9,16 @@ import {
 } from 'typeorm';
 import { Booking } from './Booking';
 
-export enum UserRole {
-  Admin = 'admin',
-  Standard = 'standard',
-}
-
 @Entity()
-export class User {
+export class ParkingSpot {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
-  firstName: string;
+  name: string;
 
-  @Column()
-  lastName: string;
-
-  @Column()
-  email: string;
-
-  @Column()
-  role: UserRole;
-
-  @Column({ unique: true })
-  token: string;
-
-  @OneToMany(() => Booking, (booking) => booking.user)
-  bookings: Promise<Booking[]>;
+  @OneToMany(() => Booking, (booking) => booking.parkingSpot)
+  bookings: Booking[];
 
   @CreateDateColumn()
   createdDate: Date;

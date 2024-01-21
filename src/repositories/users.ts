@@ -5,6 +5,10 @@ import { User } from '../entities/User';
 export const userRepository = (): Repository<User> =>
   appDataSource().getRepository(User);
 
+export const getUser = (id: number): Promise<User | null> => {
+  return userRepository().findOneBy({ id });
+};
+
 export const getUsers = (): Promise<User[]> => {
   return userRepository().find();
 };

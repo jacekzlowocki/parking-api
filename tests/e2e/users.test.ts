@@ -1,7 +1,8 @@
 import { Server } from 'http';
 import request from 'supertest';
 import { UserRole } from '../../src/entities/User';
-import { createUser, userRepository } from '../../src/repositories/users';
+import { clearDB } from '../helpers/db';
+import { createTestUser } from '../helpers/entities';
 import { server, stopServer } from './server';
 
 describe('GET /users', () => {
@@ -11,23 +12,9 @@ describe('GET /users', () => {
 
   beforeAll(async () => {
     app = await server();
-    await userRepository().clear();
-
-    await createUser({
-      email: 'test1@',
-      firstName: 'X',
-      lastName: 'X',
-      role: UserRole.Standard,
-      token: tokenStandard,
-    });
-
-    await createUser({
-      email: 'test2@',
-      firstName: 'Y',
-      lastName: 'Y',
-      role: UserRole.Admin,
-      token: tokenAdmin,
-    });
+    await clearDB(); // for bigger scale services and concurrent test runs - delete only records created in this test
+    await createTestUser({ role: UserRole.Standard, token: tokenStandard });
+    await createTestUser({ role: UserRole.Admin, token: tokenAdmin });
   });
 
   afterAll(async () => {
