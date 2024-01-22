@@ -11,8 +11,11 @@ export const findBookings = (
   return bookingRepository().find(options);
 };
 
-export const getBooking = (id: number): Promise<Booking | null> => {
-  return bookingRepository().findOneBy({ id });
+export const getBooking = (
+  id: number,
+  userId?: number,
+): Promise<Booking | null> => {
+  return bookingRepository().findOneBy({ id, userId });
 };
 
 export const createBooking = async (

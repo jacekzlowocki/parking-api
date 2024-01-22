@@ -2,6 +2,7 @@ import { parseISO } from 'date-fns';
 import {
   Body,
   Get,
+  Middlewares,
   Path,
   Post,
   Put,
@@ -11,10 +12,12 @@ import {
   Security,
 } from 'tsoa';
 import { ApiError } from '../contracts/ApiError';
+import { AuthenticatedBookingRequest } from '../contracts/AuthenticatedBookingRequest';
 import { AuthenticatedRequest } from '../contracts/AuthenticatedRequest';
 import { BookingPayload } from '../contracts/BookingPayload';
 import { Booking } from '../entities/Booking';
 import { UserRole } from '../entities/User';
+import { loadBooking } from '../middleware/loadBooking';
 import {
   createBooking,
   findBookings,
@@ -35,6 +38,15 @@ export class BookingsController {
     }
 
     return findBookings();
+  }
+
+  @Security('token')
+  @Middlewares(loadBooking)
+  @Get('/{id}')
+  public async get(
+    @Request() { booking }: AuthenticatedBookingRequest,
+  ): Promise<Booking> {
+    return booking;
   }
 
   @Security('token')

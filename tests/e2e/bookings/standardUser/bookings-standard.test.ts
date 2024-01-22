@@ -35,7 +35,7 @@ describe('as standard user', () => {
     await stopServer(app);
   });
 
-  describe('/GET bookings', () => {
+  describe('GET /bookings', () => {
     describe('when no bookings', () => {
       it('returns empty list of bookings', async () => {
         const response = await request(app)
@@ -53,20 +53,16 @@ describe('as standard user', () => {
       beforeAll(async () => {
         bookings.push(
           await createTestBooking({
-            user: user1,
-            parkingSpot: parkingSpot1,
+            userId: user1.id,
+            parkingSpotId: parkingSpot1.id,
           }),
-        );
-        bookings.push(
           await createTestBooking({
-            user: user2,
-            parkingSpot: parkingSpot1,
+            userId: user2.id,
+            parkingSpotId: parkingSpot1.id,
           }),
-        );
-        bookings.push(
           await createTestBooking({
-            user: user2,
-            parkingSpot: parkingSpot2,
+            userId: user2.id,
+            parkingSpotId: parkingSpot2.id,
           }),
         );
       });
@@ -84,10 +80,35 @@ describe('as standard user', () => {
         expect(response.body.length).toBe(1);
         expect(response.body[0].userId).toBe(user1.id);
       });
+
+      it('returns own booking by id', async () => {
+        const booking = bookings[0]; // own booking
+
+        const response = await request(app)
+          .get(`/bookings/${booking.id}`)
+          .set({ Authorization: user1.token });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toMatchObject({
+          id: booking.id,
+          userId: booking.userId,
+          parkingSpotId: booking.parkingSpotId,
+        });
+      });
+
+      it("returns 404 for other user's booking", async () => {
+        const booking = bookings[1]; // other's booking
+
+        const response = await request(app)
+          .get(`/bookings/${booking.id}`)
+          .set({ Authorization: user1.token });
+
+        expect(response.statusCode).toBe(404);
+      });
     });
   });
 
-  describe('/POST bookings', () => {
+  describe('POST /bookings', () => {
     it('creates booking for self', async () => {
       const paload = {
         parkingSpotId: parkingSpot2.id,

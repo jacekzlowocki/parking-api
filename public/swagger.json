@@ -320,6 +320,27 @@
 			}
 		},
 		"/bookings/{id}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Booking"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"token": []
+					}
+				],
+				"parameters": []
+			},
 			"put": {
 				"operationId": "Update",
 				"responses": {

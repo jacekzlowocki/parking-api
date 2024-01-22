@@ -34,7 +34,7 @@ describe('as admin user', () => {
     await stopServer(app);
   });
 
-  describe('/GET bookings', () => {
+  describe('GET /bookings', () => {
     describe('when no bookings', () => {
       it('returns empty list of bookings', async () => {
         const response = await request(app)
@@ -52,20 +52,16 @@ describe('as admin user', () => {
       beforeAll(async () => {
         bookings.push(
           await createTestBooking({
-            user: adminUser,
-            parkingSpot: parkingSpot1,
+            userId: adminUser.id,
+            parkingSpotId: parkingSpot1.id,
           }),
-        );
-        bookings.push(
           await createTestBooking({
-            user: standardUser,
-            parkingSpot: parkingSpot1,
+            userId: standardUser.id,
+            parkingSpotId: parkingSpot1.id,
           }),
-        );
-        bookings.push(
           await createTestBooking({
-            user: standardUser,
-            parkingSpot: parkingSpot2,
+            userId: standardUser.id,
+            parkingSpotId: parkingSpot2.id,
           }),
         );
       });
@@ -82,10 +78,60 @@ describe('as admin user', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.length).toBe(bookings.length);
       });
+
+      it('returns own booking by id', async () => {
+        const booking = bookings[0]; // own booking
+
+        const response = await request(app)
+          .get(`/bookings/${booking.id}`)
+          .set({ Authorization: adminUser.token });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toMatchObject({
+          id: booking.id,
+          userId: booking.userId,
+          parkingSpotId: booking.parkingSpotId,
+        });
+      });
+
+      it("returns other user's booking by id", async () => {
+        const booking = bookings[1]; // other's booking
+
+        const response = await request(app)
+          .get(`/bookings/${booking.id}`)
+          .set({ Authorization: adminUser.token });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toMatchObject({
+          id: booking.id,
+          userId: booking.userId,
+          parkingSpotId: booking.parkingSpotId,
+        });
+      });
+
+      describe('for removed booking', () => {
+        let removedBooking: Booking;
+
+        beforeAll(async () => {
+          removedBooking = await createTestBooking({
+            userId: standardUser.id,
+            parkingSpotId: parkingSpot1.id,
+          });
+          await bookingRepository().softRemove(removedBooking);
+        });
+
+        it('returns 404', async () => {
+          const response = await request(app)
+            .get(`/bookings/${removedBooking.id}`)
+            .set({ Authorization: adminUser.token });
+
+          expect(response.statusCode).toBe(404);
+        });
+      });
     });
   });
 
-  describe('/POST bookings', () => {
+  describe('POST /bookings', () => {
     it('creates booking for self', async () => {
       const paload = {
         parkingSpotId: parkingSpot2.id,

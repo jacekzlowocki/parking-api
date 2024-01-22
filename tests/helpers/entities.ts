@@ -29,7 +29,7 @@ export const createTestParkingSpot = async (
 };
 
 export const createTestBooking = async (
-  params?: Partial<Booking>,
+  params: { userId: number; parkingSpotId: number } & Partial<Booking>,
 ): Promise<Booking> => {
   return await createBooking({
     startDate: new Date(),
