@@ -191,6 +191,30 @@
 					"parkingSpotId"
 				],
 				"type": "object"
+			},
+			"Partial_BookingPayload_": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"parkingSpotId": {
+						"type": "number",
+						"format": "double"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"endDate": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
 			}
 		},
 		"securitySchemes": {
@@ -363,23 +387,13 @@
 						"token": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/BookingPayload"
+								"$ref": "#/components/schemas/Partial_BookingPayload_"
 							}
 						}
 					}

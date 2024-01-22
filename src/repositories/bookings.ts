@@ -26,3 +26,13 @@ export const createBooking = async (
 
   return booking;
 };
+
+export const updateBooking = async (
+  booking: Booking,
+  data: Partial<Booking>,
+): Promise<Booking> => {
+  return bookingRepository().save({
+    ...booking,
+    ...data,
+  });
+};

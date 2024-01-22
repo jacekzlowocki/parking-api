@@ -1,9 +1,10 @@
-import { addDays, formatISO } from 'date-fns';
+import { addDays, addHours } from 'date-fns';
 import { Server } from 'http';
 import request from 'supertest';
 import { Booking } from '../../../../src/entities/Booking';
 import { ParkingSpot } from '../../../../src/entities/ParkingSpot';
 import { User } from '../../../../src/entities/User';
+import { uformatISO } from '../../../../src/helpers/uformatISO';
 import { bookingRepository } from '../../../../src/repositories/bookings';
 import { parkingSpotRepository } from '../../../../src/repositories/parkingSpots';
 import { clearDB } from '../../../helpers/db';
@@ -112,8 +113,8 @@ describe('as standard user', () => {
     it('creates booking for self', async () => {
       const paload = {
         parkingSpotId: parkingSpot2.id,
-        startDate: formatISO(new Date()),
-        endDate: formatISO(addDays(new Date(), 1)),
+        startDate: uformatISO(new Date()),
+        endDate: uformatISO(addDays(new Date(), 1)),
       };
 
       const response = await request(app)
@@ -130,8 +131,8 @@ describe('as standard user', () => {
       const paload = {
         userId: user2.id, // not the same user as makes the request
         parkingSpotId: parkingSpot2.id,
-        startDate: formatISO(new Date()),
-        endDate: formatISO(addDays(new Date(), 1)),
+        startDate: uformatISO(new Date()),
+        endDate: uformatISO(addDays(new Date(), 1)),
       };
 
       const response = await request(app)
@@ -154,8 +155,8 @@ describe('as standard user', () => {
         const paload = {
           userId: user1.id,
           parkingSpotId: removedParkingSpot.id,
-          startDate: formatISO(new Date()),
-          endDate: formatISO(addDays(new Date(), 1)),
+          startDate: uformatISO(new Date()),
+          endDate: uformatISO(addDays(new Date(), 1)),
         };
 
         const response = await request(app)
@@ -165,6 +166,77 @@ describe('as standard user', () => {
 
         expect(response.statusCode).toBe(422);
       });
+    });
+  });
+
+  describe('PUT /bookings/{id}', () => {
+    const bookings: Booking[] = [];
+
+    beforeAll(async () => {
+      bookings.push(
+        await createTestBooking({
+          userId: user1.id,
+          parkingSpotId: parkingSpot1.id,
+        }),
+        await createTestBooking({
+          userId: user2.id,
+          parkingSpotId: parkingSpot1.id,
+        }),
+      );
+    });
+
+    afterAll(async () => {
+      await bookingRepository().remove(bookings);
+    });
+
+    it('updates own booking', async () => {
+      const booking = bookings[0]; // own booking
+      const startDate = uformatISO(addHours(booking.startDate, 2));
+
+      const payload = {
+        parkingSpotId: parkingSpot2.id,
+        startDate: startDate,
+      };
+
+      const response = await request(app)
+        .put(`/bookings/${booking.id}`)
+        .send(payload)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.userId).toEqual(user1.id);
+      expect(response.body.parkingSpotId).toEqual(parkingSpot2.id);
+      expect(response.body.startDate).toEqual(startDate);
+    });
+
+    it('fails changing own booking userId', async () => {
+      const booking = bookings[0]; // own booking
+
+      const payload = {
+        userId: user2.id, // try to ssign to different user
+      };
+
+      const response = await request(app)
+        .put(`/bookings/${booking.id}`)
+        .send(payload)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(422);
+    });
+
+    it("fails updating other's booking", async () => {
+      const booking = bookings[1]; // other's booking
+
+      const payload = {
+        parkingSpotId: parkingSpot2.id, // change parking spot
+      };
+
+      const response = await request(app)
+        .put(`/bookings/${booking.id}`)
+        .send(payload)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(404);
     });
   });
 });
