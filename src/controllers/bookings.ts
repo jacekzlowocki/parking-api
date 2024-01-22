@@ -5,6 +5,7 @@ import {
   Middlewares,
   Post,
   Put,
+  Query,
   Request,
   Response,
   Route,
@@ -13,6 +14,7 @@ import {
 import { AuthenticatedBookingRequest } from '../contracts/AuthenticatedBookingRequest';
 import { AuthenticatedRequest } from '../contracts/AuthenticatedRequest';
 import { BookingPayload } from '../contracts/BookingPayload';
+import { PaginatedResponse } from '../contracts/PaginatedResponse';
 import { Booking } from '../entities/Booking';
 import { UserRole } from '../entities/User';
 import { unserializeBooking } from '../helpers/unserializeBooking';
@@ -20,6 +22,7 @@ import { loadBooking } from '../middleware/loadBooking';
 import { validateEntity } from '../middleware/validateEntity';
 import { validateUserId } from '../middleware/validateUserId';
 import {
+  countBookings,
   createBooking,
   findBookings,
   removeBooking,
@@ -34,13 +37,23 @@ export class BookingsController {
   @Get('/')
   public async list(
     @Request() request: AuthenticatedRequest,
-  ): Promise<Booking[]> {
+    @Query('page') page: number = 0,
+    @Query('pageSize') pageSize: number = 10,
+  ): Promise<PaginatedResponse<Booking[]>> {
+    const criteria: Partial<Booking> = {};
+
     if (request.user.role === UserRole.Standard) {
-      return await request.user.bookings;
+      criteria.userId = request.user.id;
     }
 
-    // TODO: pagination
-    return findBookings();
+    return {
+      data: await findBookings(criteria, page * pageSize, pageSize),
+      meta: {
+        page,
+        pageSize,
+        total: await countBookings(criteria),
+      },
+    };
   }
 
   @Security('token')

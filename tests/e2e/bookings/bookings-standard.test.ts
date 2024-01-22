@@ -47,7 +47,10 @@ describe('as standard user', () => {
           .set({ Authorization: user1.token });
 
         expect(response.statusCode).toBe(200);
-        expect(response.body.length).toBe(0);
+        expect(response.body.meta.total).toBe(0);
+        expect(response.body.meta.page).toBe(0);
+        expect(response.body.meta.pageSize).toBe(10);
+        expect(response.body.data.length).toBe(0);
       });
     });
 
@@ -81,8 +84,11 @@ describe('as standard user', () => {
           .set({ Authorization: user1.token });
 
         expect(response.statusCode).toBe(200);
-        expect(response.body.length).toBe(1);
-        expect(response.body[0].userId).toBe(user1.id);
+        expect(response.body.meta.total).toBe(1);
+        expect(response.body.meta.page).toBe(0);
+        expect(response.body.meta.pageSize).toBe(10);
+        expect(response.body.data.length).toBe(1);
+        expect(response.body.data[0].userId).toBe(user1.id);
       });
 
       it('returns own booking by id', async () => {

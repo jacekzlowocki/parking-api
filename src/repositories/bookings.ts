@@ -1,4 +1,4 @@
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { appDataSource } from '../dataSource';
 import { Booking } from '../entities/Booking';
 
@@ -6,9 +6,17 @@ export const bookingRepository = (): Repository<Booking> =>
   appDataSource().getRepository(Booking);
 
 export const findBookings = (
-  options?: FindManyOptions<Booking>,
+  where?: FindOptionsWhere<Booking>,
+  skip?: number,
+  take?: number,
 ): Promise<Booking[]> => {
-  return bookingRepository().find(options);
+  return bookingRepository().find({ where, skip, take });
+};
+
+export const countBookings = (
+  where?: FindOptionsWhere<Booking>,
+): Promise<number> => {
+  return bookingRepository().count({ where });
 };
 
 export const getBooking = (

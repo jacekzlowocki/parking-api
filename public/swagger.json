@@ -164,6 +164,46 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"PageinatedResponseMeta": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"pageSize": {
+						"type": "number",
+						"format": "double"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"total",
+					"pageSize",
+					"page"
+				],
+				"type": "object"
+			},
+			"PaginatedResponse_Booking-Array_": {
+				"properties": {
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/Booking"
+						},
+						"type": "array"
+					},
+					"meta": {
+						"$ref": "#/components/schemas/PageinatedResponseMeta"
+					}
+				},
+				"required": [
+					"data",
+					"meta"
+				],
+				"type": "object"
+			},
 			"BookingPayload": {
 				"properties": {
 					"endDate": {
@@ -292,10 +332,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/Booking"
-									},
-									"type": "array"
+									"$ref": "#/components/schemas/PaginatedResponse_Booking-Array_"
 								}
 							}
 						}
@@ -306,7 +343,28 @@
 						"token": []
 					}
 				],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "pageSize",
+						"required": false,
+						"schema": {
+							"default": 10,
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			},
 			"post": {
 				"operationId": "Create",

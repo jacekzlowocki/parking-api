@@ -48,7 +48,10 @@ describe('as admin user', () => {
           .set({ Authorization: adminUser.token });
 
         expect(response.statusCode).toBe(200);
-        expect(response.body.length).toBe(0);
+        expect(response.body.meta.total).toBe(0);
+        expect(response.body.meta.page).toBe(0);
+        expect(response.body.meta.pageSize).toBe(10);
+        expect(response.body.data.length).toBe(0);
       });
     });
 
@@ -82,7 +85,26 @@ describe('as admin user', () => {
           .set({ Authorization: adminUser.token });
 
         expect(response.statusCode).toBe(200);
-        expect(response.body.length).toBe(bookings.length);
+        expect(response.body.meta.total).toBe(bookings.length);
+        expect(response.body.meta.page).toBe(0);
+        expect(response.body.meta.pageSize).toBe(10);
+        expect(response.body.data.length).toBe(bookings.length);
+      });
+
+      it('returns list of all bookings with custom pagination', async () => {
+        const response = await request(app)
+          .get('/bookings?page=1&pageSize=1')
+          .set({ Authorization: adminUser.token });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.meta.total).toBe(bookings.length);
+        expect(response.body.meta.page).toBe(1); // starts with 0
+        expect(response.body.meta.pageSize).toBe(1);
+        expect(response.body.data.length).toBe(1);
+        expect(response.body.data[0]).toMatchObject({
+          userId: standardUser.id,
+          parkingSpotId: parkingSpot1.id,
+        });
       });
 
       it('returns own booking by id', async () => {
