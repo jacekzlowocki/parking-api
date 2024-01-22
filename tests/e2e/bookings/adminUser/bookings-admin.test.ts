@@ -4,7 +4,7 @@ import request from 'supertest';
 import { Booking } from '../../../../src/entities/Booking';
 import { ParkingSpot } from '../../../../src/entities/ParkingSpot';
 import { User, UserRole } from '../../../../src/entities/User';
-import { uformatISO } from '../../../../src/helpers/uformatISO';
+import { formatISO } from '../../../../src/helpers/formatISO';
 import { bookingRepository } from '../../../../src/repositories/bookings';
 import { parkingSpotRepository } from '../../../../src/repositories/parkingSpots';
 import { userRepository } from '../../../../src/repositories/users';
@@ -138,8 +138,8 @@ describe('as admin user', () => {
     it('creates booking for self', async () => {
       const paload = {
         parkingSpotId: parkingSpot2.id,
-        startDate: uformatISO(new Date()),
-        endDate: uformatISO(addDays(new Date(), 1)),
+        startDate: formatISO(new Date()),
+        endDate: formatISO(addDays(new Date(), 1)),
       };
 
       const response = await request(app)
@@ -156,8 +156,8 @@ describe('as admin user', () => {
       const payload = {
         userId: standardUser.id,
         parkingSpotId: parkingSpot2.id,
-        startDate: uformatISO(new Date()),
-        endDate: uformatISO(addDays(new Date(), 1)),
+        startDate: formatISO(new Date()),
+        endDate: formatISO(addDays(new Date(), 1)),
       };
 
       const response = await request(app)
@@ -193,7 +193,7 @@ describe('as admin user', () => {
 
     it('updates own booking', async () => {
       const booking = bookings[0]; // own booking
-      const startDate = uformatISO(addHours(booking.startDate, 2));
+      const startDate = formatISO(addHours(booking.startDate, 2));
 
       const payload = {
         userId: standardUser.id, // assign to different user
