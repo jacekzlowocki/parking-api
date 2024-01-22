@@ -1,5 +1,6 @@
 import {
   Body,
+  Delete,
   Get,
   Middlewares,
   Post,
@@ -21,6 +22,7 @@ import { validateUserId } from '../middleware/validateUserId';
 import {
   createBooking,
   findBookings,
+  removeBooking,
   updateBooking,
 } from '../repositories/bookings';
 import { parkingSpotRepository } from '../repositories/parkingSpots';
@@ -84,5 +86,18 @@ export class BookingsController {
     const { booking } = request;
 
     return updateBooking(booking, unserializeBooking(body));
+  }
+
+  @Security('token')
+  @Middlewares(validateUserId)
+  @Middlewares(loadBooking)
+  @Delete('/{id}')
+  @Response(422, 'Validation Failed')
+  public async delete(
+    @Request() request: AuthenticatedBookingRequest,
+  ): Promise<void> {
+    const { booking } = request;
+
+    return removeBooking(booking);
   }
 }

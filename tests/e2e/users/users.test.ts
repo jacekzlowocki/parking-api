@@ -1,9 +1,9 @@
 import { Server } from 'http';
 import request from 'supertest';
-import { UserRole } from '../../src/entities/User';
-import { clearDB } from '../helpers/db';
-import { createTestUser } from '../helpers/entities';
-import { server, stopServer } from './server';
+import { UserRole } from '../../../src/entities/User';
+import { clearDB } from '../../helpers/db';
+import { createTestUser } from '../../helpers/entities';
+import { server, stopServer } from '../server';
 
 describe('GET /users', () => {
   let app: Server;

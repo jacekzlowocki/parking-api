@@ -1,19 +1,22 @@
 import { addDays, addHours } from 'date-fns';
 import { Server } from 'http';
 import request from 'supertest';
-import { Booking } from '../../../../src/entities/Booking';
-import { ParkingSpot } from '../../../../src/entities/ParkingSpot';
-import { User } from '../../../../src/entities/User';
-import { formatISO } from '../../../../src/helpers/formatISO';
-import { bookingRepository } from '../../../../src/repositories/bookings';
-import { parkingSpotRepository } from '../../../../src/repositories/parkingSpots';
-import { clearDB } from '../../../helpers/db';
+import { Booking } from '../../../src/entities/Booking';
+import { ParkingSpot } from '../../../src/entities/ParkingSpot';
+import { User } from '../../../src/entities/User';
+import { formatISO } from '../../../src/helpers/formatISO';
+import {
+  bookingRepository,
+  getBooking,
+} from '../../../src/repositories/bookings';
+import { parkingSpotRepository } from '../../../src/repositories/parkingSpots';
+import { clearDB } from '../../helpers/db';
 import {
   createTestBooking,
   createTestParkingSpot,
   createTestUser,
-} from '../../../helpers/entities';
-import { server, stopServer } from '../../server';
+} from '../../helpers/entities';
+import { server, stopServer } from '../server';
 
 describe('as standard user', () => {
   let app: Server;
@@ -234,6 +237,63 @@ describe('as standard user', () => {
       const response = await request(app)
         .put(`/bookings/${booking.id}`)
         .send(payload)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(404);
+    });
+  });
+
+  describe('DELETE /bookings', () => {
+    const bookings: Booking[] = [];
+    let removedBooking: Booking;
+
+    beforeAll(async () => {
+      bookings.push(
+        await createTestBooking({
+          userId: user1.id,
+          parkingSpotId: parkingSpot1.id,
+        }),
+        await createTestBooking({
+          userId: user2.id,
+          parkingSpotId: parkingSpot1.id,
+        }),
+      );
+
+      removedBooking = await createTestBooking({
+        userId: user1.id,
+        parkingSpotId: parkingSpot1.id,
+      });
+      await bookingRepository().softRemove(removedBooking);
+    });
+
+    afterAll(async () => {
+      await bookingRepository().remove(bookings);
+    });
+
+    it('deletes own booking', async () => {
+      const booking = bookings[0]; // own booking
+
+      const response = await request(app)
+        .delete(`/bookings/${booking.id}`)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(204);
+      expect(await getBooking(booking.id)).toBe(null);
+    });
+
+    it("deletes other's booking", async () => {
+      const booking = bookings[1]; // other's booking
+
+      const response = await request(app)
+        .delete(`/bookings/${booking.id}`)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(404);
+    });
+
+    it('fails to delete non-existing booking', async () => {
+      const response = await request(app)
+        .delete(`/bookings/${removedBooking.id}`)
         .set({ Authorization: user1.token });
 
       expect(response.statusCode).toBe(404);

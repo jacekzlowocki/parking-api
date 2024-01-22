@@ -36,3 +36,7 @@ export const updateBooking = async (
     ...data,
   });
 };
+
+export const removeBooking = async (booking: Booking): Promise<void> => {
+  await bookingRepository().softRemove(booking);
+};
