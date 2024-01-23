@@ -150,6 +150,7 @@ describe('as standard user', () => {
         .set({ Authorization: user1.token });
 
       expect(response.statusCode).toBe(422);
+      expect(response.body).toHaveProperty('error');
     });
 
     describe('for non-existing parkingSpot', () => {
@@ -174,6 +175,7 @@ describe('as standard user', () => {
           .set({ Authorization: user1.token });
 
         expect(response.statusCode).toBe(422);
+        expect(response.body).toHaveProperty('error');
       });
     });
   });
@@ -231,6 +233,7 @@ describe('as standard user', () => {
         .set({ Authorization: user1.token });
 
       expect(response.statusCode).toBe(422);
+      expect(response.body).toHaveProperty('error');
     });
 
     it("fails updating other's booking", async () => {

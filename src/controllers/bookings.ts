@@ -3,6 +3,7 @@ import {
   Delete,
   Get,
   Middlewares,
+  Path,
   Post,
   Put,
   Query,
@@ -31,6 +32,9 @@ import {
 import { parkingSpotRepository } from '../repositories/parkingSpots';
 import { userRepository } from '../repositories/users';
 
+const PAGE_SIZE_MAX = 100;
+const PAGE_SIZE_DEFAULT = 10;
+
 @Route('bookings')
 export class BookingsController {
   @Security('token')
@@ -38,9 +42,10 @@ export class BookingsController {
   public async list(
     @Request() request: AuthenticatedRequest,
     @Query('page') page: number = 0,
-    @Query('pageSize') pageSize: number = 10,
+    @Query('pageSize') requestedPageSize: number = PAGE_SIZE_DEFAULT,
   ): Promise<PaginatedResponse<Booking[]>> {
     const criteria: Partial<Booking> = {};
+    const pageSize = Math.min(requestedPageSize, PAGE_SIZE_MAX);
 
     if (request.user.role === UserRole.Standard) {
       criteria.userId = request.user.id;
@@ -61,6 +66,8 @@ export class BookingsController {
   @Get('/{id}')
   public async get(
     @Request() { booking }: AuthenticatedBookingRequest,
+    @Path('id')
+    id: number /* eslint-disable-line @typescript-eslint/no-unused-vars */,
   ): Promise<Booking> {
     return booking;
   }
@@ -95,6 +102,8 @@ export class BookingsController {
   public async update(
     @Request() request: AuthenticatedBookingRequest,
     @Body() body: Partial<BookingPayload>,
+    @Path('id')
+    id: number /* eslint-disable-line @typescript-eslint/no-unused-vars */,
   ): Promise<Booking> {
     const { booking } = request;
 
@@ -108,6 +117,8 @@ export class BookingsController {
   @Response(422, 'Validation Failed')
   public async delete(
     @Request() request: AuthenticatedBookingRequest,
+    @Path('id')
+    id: number /* eslint-disable-line @typescript-eslint/no-unused-vars */,
   ): Promise<void> {
     const { booking } = request;
 

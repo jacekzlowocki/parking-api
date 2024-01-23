@@ -13,5 +13,5 @@ export const validateUserId = async (
     return next();
   }
 
-  response.status(422).send('Illegal userId set');
+  response.status(422).send({ error: `Illegal value of 'userId' parameter` });
 };

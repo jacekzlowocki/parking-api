@@ -219,10 +219,6 @@
 					"userId": {
 						"type": "number",
 						"format": "double"
-					},
-					"id": {
-						"type": "number",
-						"format": "double"
 					}
 				},
 				"required": [
@@ -234,10 +230,6 @@
 			},
 			"Partial_BookingPayload_": {
 				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
 					"userId": {
 						"type": "number",
 						"format": "double"
@@ -421,7 +413,17 @@
 						"token": []
 					}
 				],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			},
 			"put": {
 				"operationId": "Update",
@@ -445,7 +447,17 @@
 						"token": []
 					}
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -472,7 +484,17 @@
 						"token": []
 					}
 				],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		}
 	},

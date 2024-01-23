@@ -41,6 +41,12 @@ describe('as admin user', () => {
   });
 
   describe('GET /bookings', () => {
+    it('returns 401 Unauthorized without Authorization', async () => {
+      const response = await request(app).get('/bookings');
+
+      expect(response.statusCode).toBe(401);
+    });
+
     describe('when no bookings', () => {
       it('returns empty list of bookings', async () => {
         const response = await request(app)
@@ -160,6 +166,14 @@ describe('as admin user', () => {
   });
 
   describe('POST /bookings', () => {
+    it('returns 401 Unauthorized without Authorization', async () => {
+      const response = await request(app)
+        .post('/bookings')
+        .send({ test: 'anything' });
+
+      expect(response.statusCode).toBe(401);
+    });
+
     it('creates booking for self', async () => {
       const paload = {
         parkingSpotId: parkingSpot2.id,
@@ -214,6 +228,12 @@ describe('as admin user', () => {
 
     afterAll(async () => {
       await bookingRepository().remove(bookings);
+    });
+
+    it('returns 401 Unauthorized without Authorization', async () => {
+      const response = await request(app).put(`/bookings/${bookings[0].id}`);
+
+      expect(response.statusCode).toBe(401);
     });
 
     it('updates own booking', async () => {
@@ -278,6 +298,7 @@ describe('as admin user', () => {
           .set({ Authorization: adminUser.token });
 
         expect(response.statusCode).toBe(422);
+        expect(response.body).toHaveProperty('error');
       });
 
       it('fails updating to non-existing user', async () => {
@@ -293,6 +314,7 @@ describe('as admin user', () => {
           .set({ Authorization: adminUser.token });
 
         expect(response.statusCode).toBe(422);
+        expect(response.body).toHaveProperty('error');
       });
     });
   });
@@ -322,6 +344,12 @@ describe('as admin user', () => {
 
     afterAll(async () => {
       await bookingRepository().remove(bookings);
+    });
+
+    it('returns 401 Unauthorized without Authorization', async () => {
+      const response = await request(app).delete(`/bookings/${bookings[0].id}`);
+
+      expect(response.statusCode).toBe(401);
     });
 
     it('deletes own booking', async () => {

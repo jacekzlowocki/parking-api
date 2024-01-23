@@ -6,14 +6,14 @@
   "scripts": {
     "build": "tsoa spec-and-routes && tsc",
     "prestart-dev": "npm run swagger",
-    "start-dev": "concurrently 'nodemon' 'nodemon -x tsoa spec-and-routes'",
+    "start-dev": "concurrently 'nodemon' 'nodemon -x npm run swagger'",
     "start": "node build/index.js",
     "lint": "eslint '**/*.ts'",
     "lint-fix": "eslint --fix '**/*.ts'",
     "prettier": "prettier --check --ignore-unknown '**/*.ts'",
     "prettier-fix": "prettier --write --ignore-unknown '**/*.ts'",
     "typecheck": "npx tsc-files --noEmit --pretty",
-    "swagger": "tsoa spec",
+    "swagger": "tsoa spec-and-routes",
     "test": "jest --forceExit --runInBand",
     "prepare": "npx husky install"
   },

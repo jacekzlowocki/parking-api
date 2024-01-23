@@ -25,6 +25,6 @@ export const validateEntity = <T extends ObjectLiteral>(
       return next();
     }
 
-    response.status(422).send(`Invalid value of '${key}' parameter`);
+    response.status(422).send({ error: `Invalid value of '${key}' parameter` });
   };
 };

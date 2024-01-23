@@ -79,12 +79,12 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "BookingPayload": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"endDate":{"dataType":"string","required":true},"startDate":{"dataType":"string","required":true},"parkingSpotId":{"dataType":"double","required":true},"userId":{"dataType":"double"},"id":{"dataType":"double"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"endDate":{"dataType":"string","required":true},"startDate":{"dataType":"string","required":true},"parkingSpotId":{"dataType":"double","required":true},"userId":{"dataType":"double"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Partial_BookingPayload_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"double"},"userId":{"dataType":"double"},"parkingSpotId":{"dataType":"double"},"startDate":{"dataType":"string"},"endDate":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"userId":{"dataType":"double"},"parkingSpotId":{"dataType":"double"},"startDate":{"dataType":"string"},"endDate":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -155,7 +155,7 @@ export function RegisterRoutes(app: Router) {
             const args = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     page: {"default":0,"in":"query","name":"page","dataType":"double"},
-                    pageSize: {"default":10,"in":"query","name":"pageSize","dataType":"double"},
+                    requestedPageSize: {"default":10,"in":"query","name":"pageSize","dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -182,6 +182,7 @@ export function RegisterRoutes(app: Router) {
             function BookingsController_get(request: any, response: any, next: any) {
             const args = {
                     undefined: {"in":"request","required":true,"dataType":"object"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -236,6 +237,7 @@ export function RegisterRoutes(app: Router) {
             const args = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     body: {"in":"body","name":"body","required":true,"ref":"Partial_BookingPayload_"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -262,6 +264,7 @@ export function RegisterRoutes(app: Router) {
             function BookingsController_delete(request: any, response: any, next: any) {
             const args = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
