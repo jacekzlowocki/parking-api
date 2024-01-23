@@ -204,6 +204,17 @@
 				],
 				"type": "object"
 			},
+			"RequestError": {
+				"properties": {
+					"error": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"error"
+				],
+				"type": "object"
+			},
 			"BookingPayload": {
 				"properties": {
 					"endDate": {
@@ -371,8 +382,25 @@
 							}
 						}
 					},
+					"400": {
+						"description": "Invalid Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RequestError"
+								}
+							}
+						}
+					},
 					"422": {
-						"description": "Validation Failed"
+						"description": "Unprocessable Content",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RequestError"
+								}
+							}
+						}
 					}
 				},
 				"security": [
@@ -403,6 +431,16 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/Booking"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Unprocessable Content",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RequestError"
 								}
 							}
 						}
@@ -438,8 +476,25 @@
 							}
 						}
 					},
+					"400": {
+						"description": "Invalid Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RequestError"
+								}
+							}
+						}
+					},
 					"422": {
-						"description": "Validation Failed"
+						"description": "Unprocessable Content",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RequestError"
+								}
+							}
+						}
 					}
 				},
 				"security": [
@@ -476,7 +531,14 @@
 						"description": "No content"
 					},
 					"422": {
-						"description": "Validation Failed"
+						"description": "Unprocessable Content",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RequestError"
+								}
+							}
+						}
 					}
 				},
 				"security": [

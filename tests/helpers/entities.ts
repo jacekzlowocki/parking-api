@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { addDays } from 'date-fns';
+import { addDays, addHours } from 'date-fns';
 import { v4 } from 'uuid';
 import { Booking } from '../../src/entities/Booking';
 import { ParkingSpot } from '../../src/entities/ParkingSpot';
@@ -32,7 +32,7 @@ export const createTestBooking = async (
   params: { userId: number; parkingSpotId: number } & Partial<Booking>,
 ): Promise<Booking> => {
   return await createBooking({
-    startDate: new Date(),
+    startDate: addHours(new Date(), 1),
     endDate: addDays(new Date(), 1),
     ...params,
   });

@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import { readFileSync } from 'fs';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
+import { errorHandler } from './middleware/errorHandler';
 import { RegisterRoutes } from './routes/routes';
 
 const app: Application = express();
@@ -18,5 +19,7 @@ app.use(
 );
 
 RegisterRoutes(app);
+
+app.use(errorHandler);
 
 export default app;

@@ -14,7 +14,7 @@
     "prettier-fix": "prettier --write --ignore-unknown '**/*.ts'",
     "typecheck": "npx tsc-files --noEmit --pretty",
     "swagger": "tsoa spec-and-routes",
-    "test": "jest --forceExit --runInBand",
+    "test": "jest --runInBand",
     "prepare": "npx husky install"
   },
   "keywords": [],

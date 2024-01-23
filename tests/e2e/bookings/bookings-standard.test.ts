@@ -1,4 +1,4 @@
-import { addDays, addHours } from 'date-fns';
+import { addDays, addHours, addMinutes, subMinutes } from 'date-fns';
 import { Server } from 'http';
 import request from 'supertest';
 import { Booking } from '../../../src/entities/Booking';
@@ -119,25 +119,56 @@ describe('as standard user', () => {
   });
 
   describe('POST /bookings', () => {
-    it('creates booking for self', async () => {
-      const paload = {
+    let existingBooking: Booking;
+
+    beforeAll(async () => {
+      existingBooking = await createTestBooking({
+        userId: user2.id,
         parkingSpotId: parkingSpot2.id,
-        startDate: formatISO(new Date()),
+        startDate: addMinutes(new Date(), 1),
+        endDate: addMinutes(new Date(), 60),
+      });
+    });
+
+    afterAll(async () => {
+      bookingRepository().remove(existingBooking);
+    });
+
+    it('creates booking for self', async () => {
+      const payload = {
+        parkingSpotId: parkingSpot1.id,
+        startDate: formatISO(addMinutes(new Date(), 1)),
         endDate: formatISO(addDays(new Date(), 1)),
       };
 
       const response = await request(app)
         .post('/bookings')
-        .send(paload)
+        .send(payload)
         .set({ Authorization: user1.token });
 
       expect(response.statusCode).toBe(200);
       expect(response.body.userId).toEqual(user1.id);
-      expect(response.body.parkingSpotId).toEqual(parkingSpot2.id);
+      expect(response.body.parkingSpotId).toEqual(parkingSpot1.id);
+    });
+
+    it('fails to create booking for already booked parking spot', async () => {
+      const payload = {
+        parkingSpotId: parkingSpot2.id, // <- matches with `existingBooking`
+        startDate: formatISO(addMinutes(new Date(), 10)), // <- overlaps with `existingBooking`
+        endDate: formatISO(addDays(new Date(), 1)),
+      };
+
+      const response = await request(app)
+        .post('/bookings')
+        .send(payload)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('error');
     });
 
     it('fails to create booking for other user', async () => {
-      const paload = {
+      const payload = {
         userId: user2.id, // not the same user as makes the request
         parkingSpotId: parkingSpot2.id,
         startDate: formatISO(new Date()),
@@ -146,7 +177,7 @@ describe('as standard user', () => {
 
       const response = await request(app)
         .post('/bookings')
-        .send(paload)
+        .send(payload)
         .set({ Authorization: user1.token });
 
       expect(response.statusCode).toBe(422);
@@ -162,7 +193,7 @@ describe('as standard user', () => {
       });
 
       it('fails to create booking', async () => {
-        const paload = {
+        const payload = {
           userId: user1.id,
           parkingSpotId: removedParkingSpot.id,
           startDate: formatISO(new Date()),
@@ -171,7 +202,7 @@ describe('as standard user', () => {
 
         const response = await request(app)
           .post('/bookings')
-          .send(paload)
+          .send(payload)
           .set({ Authorization: user1.token });
 
         expect(response.statusCode).toBe(422);
@@ -191,7 +222,9 @@ describe('as standard user', () => {
         }),
         await createTestBooking({
           userId: user2.id,
-          parkingSpotId: parkingSpot1.id,
+          parkingSpotId: parkingSpot2.id,
+          startDate: addMinutes(new Date(), 1),
+          endDate: addMinutes(new Date(), 60),
         }),
       );
     });
@@ -218,6 +251,56 @@ describe('as standard user', () => {
       expect(response.body.userId).toEqual(user1.id);
       expect(response.body.parkingSpotId).toEqual(parkingSpot2.id);
       expect(response.body.startDate).toEqual(startDate);
+    });
+
+    it('fails updating when conflicts with existing', async () => {
+      const booking = bookings[0];
+
+      const payload = {
+        parkingSpotId: parkingSpot2.id, // <- changing to parkingSpot2
+        startDate: formatISO(addMinutes(new Date(), 10)), // <- which alread has booking here
+        endDate: formatISO(addDays(new Date(), 1)),
+      };
+
+      const response = await request(app)
+        .put(`/bookings/${booking.id}`)
+        .send(payload)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('error');
+    });
+
+    it('fails updating startDate to past', async () => {
+      const booking = bookings[0];
+
+      const payload = {
+        startDate: subMinutes(new Date(), 10),
+      };
+
+      const response = await request(app)
+        .put(`/bookings/${booking.id}`)
+        .send(payload)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(422);
+      expect(response.body).toHaveProperty('error');
+    });
+
+    it('fails updating startDate to after endDate', async () => {
+      const booking = bookings[0];
+
+      const payload = {
+        startDate: addHours(booking.endDate, 1),
+      };
+
+      const response = await request(app)
+        .put(`/bookings/${booking.id}`)
+        .send(payload)
+        .set({ Authorization: user1.token });
+
+      expect(response.statusCode).toBe(422);
+      expect(response.body).toHaveProperty('error');
     });
 
     it('fails changing own booking userId', async () => {

@@ -37,7 +37,7 @@ export const createBooking = async (
 
 export const updateBooking = async (
   booking: Booking,
-  data: Partial<Booking>,
+  data: Partial<Booking> = {},
 ): Promise<Booking> => {
   return bookingRepository().save({
     ...booking,

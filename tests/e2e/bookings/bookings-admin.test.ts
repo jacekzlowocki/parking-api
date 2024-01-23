@@ -1,4 +1,4 @@
-import { addDays, addHours } from 'date-fns';
+import { addHours, addMinutes } from 'date-fns';
 import { Server } from 'http';
 import request from 'supertest';
 import { Booking } from '../../../src/entities/Booking';
@@ -175,15 +175,15 @@ describe('as admin user', () => {
     });
 
     it('creates booking for self', async () => {
-      const paload = {
+      const payload = {
         parkingSpotId: parkingSpot2.id,
-        startDate: formatISO(new Date()),
-        endDate: formatISO(addDays(new Date(), 1)),
+        startDate: formatISO(addMinutes(new Date(), 1)),
+        endDate: formatISO(addMinutes(new Date(), 60)),
       };
 
       const response = await request(app)
         .post('/bookings')
-        .send(paload)
+        .send(payload)
         .set({ Authorization: adminUser.token });
 
       expect(response.statusCode).toBe(200);
@@ -195,8 +195,8 @@ describe('as admin user', () => {
       const payload = {
         userId: standardUser.id,
         parkingSpotId: parkingSpot2.id,
-        startDate: formatISO(new Date()),
-        endDate: formatISO(addDays(new Date(), 1)),
+        startDate: formatISO(addMinutes(new Date(), 61)),
+        endDate: formatISO(addMinutes(new Date(), 120)),
       };
 
       const response = await request(app)
