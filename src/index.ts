@@ -10,7 +10,9 @@ const dataSourceOptions: DataSourceOptions = {
   host: process.env.DB_SERVER,
   port: parseInt(process.env.DB_PORT ?? '5432'),
   username: process.env.DB_USER,
-  password: fs.readFileSync(process.env.DB_PASSWORD_FILE ?? '', 'utf8').trim(),
+  password: process.env.DB_PASSWORD_FILE
+    ? fs.readFileSync(process.env.DB_PASSWORD_FILE, 'utf8').trim()
+    : process.env.DB_PASSWORD ?? '',
   database: process.env.DB_NAME,
   synchronize: true,
   logging: false,
