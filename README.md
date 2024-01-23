@@ -35,6 +35,10 @@ If in development mode (e.g. via docker):
 - file watchers & compilators are active
 - app's DB along with test DB is running
 
+### Available endpooints
+
+**For the list of endpoints, please start the application and visit: http://localhost:8000/docs/**
+
 ### How it's build
 
 The API consisit of following components:
