@@ -16,7 +16,7 @@ This is a REST API for getting, creating, updating and deleting Parking Spot boo
   ```
 - OR on host machine:
   ```
-  # export DB env variables (see index.ts for details)
+  # export DB env variables (see src/index.ts for details)
   export DB_SERVER=127.0.0.1
   export DB_...
 
@@ -28,8 +28,7 @@ This is a REST API for getting, creating, updating and deleting Parking Spot boo
   ```
 
 
-At this point service is startede, which means:
-- app is available at http://localhost:8000
+At this point service is started and available at http://localhost:8000/
 
 If in development mode (e.g. via docker):
 - file watchers & compilators are active
@@ -41,7 +40,7 @@ If in development mode (e.g. via docker):
 
 ### How it's build
 
-The API consisit of following components:
+The API consist of following components:
 - Typescript language compiler
 - Express.js node framework
 - TypeScript OpenAPI (TSOA) library - for structuring and describing the API in open standard
@@ -74,7 +73,7 @@ Then the DB is available on (see the compose.yml for details):
 - db user: postgres
 - password: (see / update `password.txt` file)
 
-Or if preferred to use existng DB running elswhere:
+Or if preferred to use existng DB running elsewhere:
 - update DB_* env variables in compose.yml for `server` container, if running app with docker
 - provide all the DB_* env variable in the terminal, if running app on the host machine with ``
 
