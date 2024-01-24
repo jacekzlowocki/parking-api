@@ -40,7 +40,7 @@ If in development mode (e.g. via docker):
 
 ### How it's build
 
-The API consist of following components:
+The API consists of following components:
 - Typescript language compiler
 - Express.js node framework
 - TypeScript OpenAPI (TSOA) library - for structuring and describing the API in open standard
